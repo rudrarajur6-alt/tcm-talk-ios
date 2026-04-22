@@ -29,7 +29,7 @@ NSString * const privacyURL = @"https://thecloud.market/privacy";
 BOOL const isBrandedApp = YES;
 BOOL const multiAccountEnabled = YES;
 BOOL const useAppsGroup = YES;
-BOOL const forceDomain = YES;
+BOOL const forceDomain = NO;
 NSString * const domain = @"https://thecloudmarket.thecloud.market";
 NSString * const appAlternateVersion = @"";
 
