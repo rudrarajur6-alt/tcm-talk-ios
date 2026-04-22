@@ -30,7 +30,7 @@ BOOL const isBrandedApp = NO;
 BOOL const multiAccountEnabled = YES;
 BOOL const useAppsGroup = YES;
 BOOL const forceDomain = NO;
-NSString * const domain = @"";
+NSString * const domain = nil;
 NSString * const appAlternateVersion = @"";
 
 + (NSString *)getAppVersionString
