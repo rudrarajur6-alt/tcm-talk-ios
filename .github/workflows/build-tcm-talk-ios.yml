@@ -16,18 +16,20 @@ jobs:
         with:
           submodules: true
 
-      - name: Select Xcode 16.3
-        run: sudo xcode-select -s /Applications/Xcode_16.3.app
+      - name: Setup Xcode 26.2 (matches upstream; TOCropViewController 3.0 needs iOS 26 SDK)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.2"
 
       - name: List available iOS simulator runtimes
         run: |
           xcrun simctl list runtimes
           xcodebuild -version
 
-      - name: Download iOS 18.4 simulator (required by Xcode 16.3 default)
+      - name: Install iOS 18.5 simulator
         run: |
           xcrun simctl list > /dev/null
-          xcodebuild -downloadPlatform iOS -buildVersion 18.4 || true
+          xcodebuild -downloadPlatform iOS -buildVersion 18.5 || true
 
       - name: Setup CocoaPods
         uses: maxim-lobanov/setup-cocoapods@v1
@@ -37,14 +39,14 @@ jobs:
       - name: Pod install
         run: pod install --repo-update
 
-      - name: Build for iOS Simulator (main target only, skip tests)
+      - name: Build for iOS Simulator
         run: |
           set -o pipefail
           xcodebuild \
             -workspace NextcloudTalk.xcworkspace \
             -scheme NextcloudTalk \
             -configuration Debug \
-            -destination "generic/platform=iOS Simulator" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
             -derivedDataPath build \
             -skipPackagePluginValidation \
             -skipMacroValidation \
@@ -52,7 +54,6 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
-            IPHONEOS_DEPLOYMENT_TARGET=17.0 \
             build | tee xcodebuild.log | xcpretty || (tail -400 xcodebuild.log && exit 1)
 
       - name: Package .app for Appetize
