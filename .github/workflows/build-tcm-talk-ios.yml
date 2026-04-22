@@ -20,7 +20,14 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_16.3.app
 
       - name: List available iOS simulator runtimes
-        run: xcrun simctl list runtimes | head -30
+        run: |
+          xcrun simctl list runtimes
+          xcodebuild -version
+
+      - name: Download iOS 18.4 simulator (required by Xcode 16.3 default)
+        run: |
+          xcrun simctl list > /dev/null
+          xcodebuild -downloadPlatform iOS -buildVersion 18.4 || true
 
       - name: Setup CocoaPods
         uses: maxim-lobanov/setup-cocoapods@v1
@@ -30,21 +37,23 @@ jobs:
       - name: Pod install
         run: pod install --repo-update
 
-      - name: Build for iOS Simulator
+      - name: Build for iOS Simulator (main target only, skip tests)
         run: |
           set -o pipefail
           xcodebuild \
             -workspace NextcloudTalk.xcworkspace \
             -scheme NextcloudTalk \
             -configuration Debug \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.6" \
+            -destination "generic/platform=iOS Simulator" \
             -derivedDataPath build \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             IPHONEOS_DEPLOYMENT_TARGET=17.0 \
-            build | tee xcodebuild.log | xcpretty || (tail -300 xcodebuild.log && exit 1)
+            build | tee xcodebuild.log | xcpretty || (tail -400 xcodebuild.log && exit 1)
 
       - name: Package .app for Appetize
         run: |
