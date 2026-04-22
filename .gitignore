@@ -3,9 +3,9 @@
 Pods
 Podfile.lock
 NextcloudTalk.xcodeproj/xcuserdata
-NextcloudTalk.xcodeproj/xcshareddata
 NextcloudTalk.xcworkspace/xcuserdata
 NextcloudTalk.xcworkspace/xcshareddata
+_*.py
 ThirdParty/WebRTC.xcframework
 .DS_Store
 testResult.xcresult
