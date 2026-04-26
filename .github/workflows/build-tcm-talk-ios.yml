@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -65,13 +65,13 @@ jobs:
           zip -r "$GITHUB_WORKSPACE/out/tcm-talk-ios.zip" "$(basename "$APP_PATH")"
           ls -la "$GITHUB_WORKSPACE/out/"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: tcm-talk-ios-app
           path: out/tcm-talk-ios.zip
           retention-days: 30
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           tag_name: ios-debug-${{ github.run_number }}
